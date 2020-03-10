@@ -1,0 +1,69 @@
+====================================================================
+TextualDFAs
+Author: Jens Clausen 
+====================================================================
+
+--------------------------------------------------------------------
+Textual representation of the decomment dfa 
+--------------------------------------------------------------------
+
+NORMAL (accept) <-- the start state
+    /:  NORMALSLASH
+    ":  INSTRING 
+        print(c) 
+    ':  INCHAR 
+        print(c)
+    other: NORMAL
+        print(c) 
+
+NORMALSLASH (accept)
+    *:  INCOMMENT
+        print(' ')
+    ":  INSTRING
+        print('/')
+        print(c)
+    ':  INCHAR
+        print('/')
+        print(c) 
+    /:  NORMALSLASH
+        print('/')
+    other: NORMAL
+        print('/')
+        print(c) 
+
+INCOMMENT (reject)
+    *:  INCOMMENTSTAR 
+    \n: INCOMMENT
+        print('\n')
+    other: INCOMMENT 
+
+INCOMMENTSTAR (reject) 
+    *:  INCOMMENTSTAR 
+    /:  NORMAL 
+    \n: INCOMMENT 
+        print('\n') 
+    other: INCOMMENT 
+
+INSTRING (accept) 
+    ":  NORMAL
+        print(c) 
+    \:  INSTRINGBACKSLASH
+        print(c) 
+    other: INSTRING
+        print(c) 
+
+INSTRINGBACKSLASH (accept) 
+    other: INSTRING 
+        print(c) 
+
+INCHAR (accept)
+    ': NORMAL 
+        print(c) 
+    \: INCHARBACKSLASH
+        print(c) 
+    other: INCHAR
+        print(c)  
+
+INCHARBACKSLASH (accept) 
+    other: INCHAR
+        print(c)  
